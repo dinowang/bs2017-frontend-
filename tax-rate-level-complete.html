@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>累進稅率</title>
+    <!-- Bootstrap core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="stylesheets/dashboard.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Help</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="index.html">首頁 <span class="sr-only">(current)</span></a></li>
+            <li><a href="temperature-convert-complete.html">溫度轉換</a></li>
+            <li><a href="guess-number-complete.html">猜數字</a></li>
+            <li><a href="tax-rate-level-complete.html">浮動稅率計算</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="horoscope-complete.html">生命靈數</a></li>
+            <li><a href="horoscope-$get-complete.html">生命靈數 ($.get)</a></li>
+            <li><a href="horoscope-ajax-complete.html">生命靈數 ($.ajax)</a></li>
+            <li><a href="horoscope-ajax-ui-complete.html">生命靈數 ($.ajax, DatePicker)</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="hsinchu-freebus-complete.html">新竹免費公車</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="parking-complete.html">路外停車資訊</a></li>
+            <li><a href="parking-$tmpl-gmap-complete.html">路外停車資訊 (樣板, 地圖)</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="youbike-$tmpl-gmap-complete.html">Youbike (樣板, 地圖)</a></li>
+            <li><a href="youbike-$tmpl-gmap-waterfall-complete.html">Youbike (樣板, 地圖, 瀑布流)</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h2>累進稅率</h2>
+          <p>
+            <div class="input-group">
+              <input id="total-income" class="form-control" type="number" name="total-income" value="0">
+              <span class="input-group-btn">
+                <a id="compute" type="button" class="btn btn-primary">計算稅額</a>
+              </span>
+            </div>
+          </p>
+
+          <ul id="results" class="list-group">
+            <!--
+            <li class="list-group-item">
+              <p>
+                <em>2000/1/1</em> 的你，星座是 <em>獅子座</em>
+              </p>
+              <p>
+                你的生命靈數：<br>
+                1. 你是Leo獅子座中最為自我的，但可能因此造成人際問題。
+              </p>
+            </li>
+            -->
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+      var taxRateLookup = [
+        { income: 10310001, rate: .5 },
+        { income: 4530001, rate: .4 },
+        { income: 2420001, rate: .3 },
+        { income: 1210001, rate: .2 },
+        { income: 540001, rate: .12 },
+        { income: 0, rate: .05 },
+      ];
+
+      $("#compute").click(function () {
+        computeTax();
+      });
+
+      function computeTax() {
+        var myTotalIncome = $("#total-income").val();
+        var myTaxRate = 0;
+
+        for (var i = 0; i < taxRateLookup.length; i++) {
+          var level = taxRateLookup[i];
+
+          if (myTotalIncome >= level.income) {
+            myTaxRate = level.rate;
+            break;
+          }
+        }
+
+        var shouldPayTax = Math.ceil(myTotalIncome * myTaxRate);
+
+        var html = "<p>總收入: " + myTotalIncome + 
+                   "，稅率: " + myTaxRate + "，應繳: " + 
+                   shouldPayTax + "</p>";
+
+        $("<li></li>")
+          .addClass("list-group-item")
+          .html(html)
+          .prependTo("#results");
+      }
+
+      $("#total-income").keyup(function (event) {
+        if (event.keyCode == 13) {
+          computeTax();
+        }
+      });
+    </script>
+  </body>
+</html>
